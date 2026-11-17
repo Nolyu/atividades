@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de Atividades</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f5d8a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#f6f5f2; --card:#ffffff; --ink:#1f2328; --muted:#6b7078; --line:#e3e1dc;
+  --accent:#2f5d8a; --accent-ink:#ffffff;
+  --ok:#1f7a4d; --ok-bg:#e3f3ea; --late:#9a6400; --late-bg:#fdf0d6; --no:#b3261e; --no-bg:#fbe4e2; --pend:#8a8f96; --pend-bg:#eeede9; --f:#5b4b9a; --f-bg:#ebe7f7;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16181b; --card:#1f2226; --ink:#e8e9eb; --muted:#9aa0a8; --line:#2f3338;
+    --accent:#7fb0e0; --accent-ink:#10161d;
+    --ok:#6fd3a0; --ok-bg:#1d3a2c; --late:#f0c062; --late-bg:#3d3220; --no:#f2938b; --no-bg:#43221f; --pend:#8a8f96; --pend-bg:#2a2d31; --f:#b9a8f0; --f-bg:#2e2944;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 80px}
+header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+header h1{font-size:18px;margin:0;flex:1}
+.row{display:flex;gap:8px;align-items:center}
+select,input[type=text],input[type=date],input[type=number],textarea{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%}
+textarea{min-height:140px;resize:vertical}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 12px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--no);border-color:var(--no)}
+.btn.small{padding:6px 10px;font-size:13px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:10px 0 14px}
+.tabs button{flex:1;border:0;background:transparent;padding:8px 4px;border-radius:9px;cursor:pointer;color:var(--muted);font-size:14px}
+.tabs button.on{background:var(--accent);color:var(--accent-ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.list-item{display:flex;align-items:center;gap:10px;cursor:pointer}
+.grow{flex:1;min-width:0}
+.title{font-weight:600}
+.sub{color:var(--muted);font-size:13px}
+.bar{height:6px;background:var(--pend-bg);border-radius:4px;overflow:hidden;margin-top:6px;display:flex}
+.bar span{display:block;height:100%}
+.empty{color:var(--muted);text-align:center;padding:28px 10px}
+.student{padding:10px 0;border-bottom:1px solid var(--line)}
+.student:last-child{border-bottom:0}
+.st-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.st-head .name{flex:1;min-width:0;font-size:14px}
+.tag{font-size:12px;border-radius:6px;padding:1px 6px;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chip{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 9px;font-size:13px;cursor:pointer;color:var(--muted);min-width:44px}
+.chip.on{background:var(--ok-bg);color:var(--ok);border-color:var(--ok);font-weight:600}
+.chip.late.on{background:var(--late-bg);color:var(--late);border-color:var(--late)}
+.chip.no.on{background:var(--no-bg);color:var(--no);border-color:var(--no)}
+.chip.lateflag{min-width:auto}
+.chip.abs.on{background:var(--f-bg);color:var(--f);border-color:var(--f);font-weight:600}
+.chip.obsbtn.on{border-color:var(--accent);color:var(--accent)}
+.obs{font-size:12px;color:var(--muted);margin:-2px 0 6px;white-space:pre-wrap;cursor:pointer}
+.s-f{background:var(--f-bg);color:var(--f)}
+.pct{width:70px !important;padding:6px 8px !important;text-align:center}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:center;white-space:nowrap}
+th{font-weight:600;color:var(--muted);vertical-align:bottom}
+th.act{max-width:90px;white-space:normal;line-height:1.2}
+td.nm,th.nm{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.cell{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:26px;border-radius:7px;cursor:pointer;font-weight:600;border:0;padding:0 5px}
+.s-p{background:var(--ok-bg);color:var(--ok)}
+.s-a{background:var(--late-bg);color:var(--late)}
+.s-n{background:var(--no-bg);color:var(--no)}
+.s-x{background:var(--pend-bg);color:var(--pend)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted);margin:8px 2px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.back{border:0;background:none;color:var(--accent);padding:0;margin-bottom:8px;cursor:pointer}
+.status{font-size:12px;color:var(--muted);text-align:right;min-height:16px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.modal{background:var(--card);width:100%;max-width:520px;border-radius:16px 16px 0 0;padding:16px;max-height:90vh;overflow:auto}
+@media(min-width:600px){.modal-bg{align-items:center}.modal{border-radius:16px}}
+.modal h2{font-size:17px;margin:0 0 12px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.checks label{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:14px}
+.checks{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:4px 10px}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.notice{background:var(--late-bg);color:var(--late);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.big{font-size:16px;font-weight:700}
+.search{position:relative;margin-bottom:10px}
+.search input{padding-left:34px !important;padding-right:36px !important}
+.search .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px}
+.nores{display:none}
+.syncbar{position:sticky;top:0;z-index:5;background:var(--late-bg);color:var(--late);font-size:13px;padding:8px 14px;text-align:center;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="syncbar" class="syncbar" style="display:none"></div>
+<div class="wrap" id="app"><div class="empty">Carregando…</div></div>
+<div id="modal-root"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
